@@ -5,7 +5,7 @@ from django.template import Context
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+
 from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -15,7 +15,7 @@ from django.utils.encoding import force_bytes, force_text
 # Create your views here.
 from .models import NewUser
 from .forms import NewUserForm, PasswordResetForms, EmailForm
-from .Utils import Verificationtoken
+from .Utils import Verificationtoken, Verification_Mail, Password_reset_Mail
 
 
 @login_required(login_url="/login")
@@ -29,12 +29,12 @@ def register_request(request):
         form = NewUserForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect("storedata:homepage")
     form = NewUserForm
     return render(
         request=request,
-        template_name="storedata/register.html",
+        template_name="storedata/regist.html",
         context={"register_form": form},
     )
 
@@ -47,7 +47,8 @@ def login_request(request):
             password = form.cleaned_data.get("password")
             user = authenticate(username=username, password=password)
             if user is not None:
-                login(request, user)
+                login(request, user,
+                      backend='django.contrib.auth.backends.ModelBackend')
                 messages.info(request, f"You are now logged in as {username}.")
                 return redirect("storedata:homepage")
             else:
@@ -57,7 +58,7 @@ def login_request(request):
     form = AuthenticationForm()
     return render(
         request=request,
-        template_name="storedata/login.html",
+        template_name="storedata/signin.html",
         context={"login_form": form},
     )
 
@@ -67,47 +68,13 @@ def logout_request(request):
     return redirect("storedata:homepage")
 
 
-def send(to, name):
-    subject = "subject"
-    content = "This is test content for {name}"
-    html_content = f"<p>This is <strong>test</strong> content for {name} </p>".format(
-        name=name
-    )
-    email = EmailMultiAlternatives(subject, content, to=to)
-    email.attach_alternative(html_content, "text/html")
-    email.send()
-
-
 def verify_mail(request):
-    user = NewUser.objects.get(email=request.user.email)
-    uid = urlsafe_base64_encode(force_bytes(user.email))
-    domain = get_current_site(request).domain
-    tokens = Verificationtoken.make_token(user)
-    link = (
-        "http://"
-        + domain
-        + reverse("storedata:activate", kwargs={"uid": uid, "token": tokens})
-    )
-    print(link)
-    send([user.email], link)
-
-    messages.info(request, f"You are now logged in as {user.email}.")
+    Verification_Mail(request=request)
     return JsonResponse("send", safe=False)
 
 
 def verify_mail_reset(request, email):
-    user = NewUser.objects.get(email=email)
-    uid = urlsafe_base64_encode(force_bytes(user.email))
-    domain = get_current_site(request).domain
-    tokens = Verificationtoken.make_token(user)
-    link = (
-        "http://"
-        + domain
-        + reverse("storedata:reset", kwargs={"uid": uid, "token": tokens})
-    )
-    send([user.email], link)
-
-    messages.info(request, f"You are now logged in as {user.email}.")
+    Password_reset_Mail(request=request, email=email)
     return JsonResponse("send", safe=False)
 
 
@@ -139,7 +106,8 @@ def email_pass_reset(request):
         email = form.data.get("email")
         verify_mail_reset(request=request, email=email)
         return HttpResponse("sennnt.....check mail")
-        messages.error(request, "Unsuccessful registration. Invalid information.")
+        messages.error(
+            request, "Unsuccessful registration. Invalid information.")
     form = EmailForm
     return render(
         request=request,
@@ -187,7 +155,6 @@ def reset_password__request(request):
         login(request, user)
         messages.success(request, "Registration successful.")
         return redirect("storedata:homepage")
-        messages.error(request, "Unsuccessful registration. Invalid information.")
     form = PasswordResetForms
     return render(
         request=request,

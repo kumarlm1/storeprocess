@@ -48,6 +48,11 @@ INSTALLED_APPS = [
     "storedata",
     "crispy_forms",
     "django_email_verification",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",   # <--
+    "allauth.socialaccount",   # <--
+    "allauth.socialaccount.providers.google",
 ]
 
 MIDDLEWARE = [
@@ -65,7 +70,7 @@ ROOT_URLCONF = "storeprocess.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "storeprocess/templates")],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -139,3 +144,25 @@ AUTH_USER_MODEL = "storedata.NewUser"
 CRISPY_TEMPLATE_PACK = "uni_form"
 
 PASSWORD_RESET_TIMEOUT = 3 * 3600  # 3 hours
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'user_name'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
