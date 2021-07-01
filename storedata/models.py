@@ -63,4 +63,16 @@ class Folder(models.Model):
     class Meta:
         ordering = ['updated']
 
-        
+
+class File(models.Model):
+    user = models.ForeignKey(NewUser, on_delete=models.CASCADE)
+    folder = models.ForeignKey(
+        Folder, on_delete=models.CASCADE, null=True, blank=True)
+    filename = models.CharField(max_length=150, blank=False)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.filename
+
+    class Meta:
+        ordering = ['updated']
