@@ -49,3 +49,18 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.user_name} {self.email}"
+
+
+class Folder(models.Model):
+    user = models.ForeignKey(NewUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=150, blank=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['updated']
+
+        

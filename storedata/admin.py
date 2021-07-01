@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import NewUser
+from .models import NewUser, Folder
+from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
@@ -22,4 +23,21 @@ class UserAdminConfig(UserAdmin):
     )
 
 
+class UserAdminConfigFolder(admin.ModelAdmin):
+
+    ordering = ("-updated",)
+    list_filter = ('created', 'name')
+    list_display=('user','name','created','updated')
+    fieldsets = (
+        (None, {"fields": ("user",
+                           "name",
+                           )}),
+
+
+    )
+    readonly_fields = ['created', 'updated']
+
+
 admin.site.register(NewUser, UserAdminConfig)
+
+admin.site.register(Folder, UserAdminConfigFolder)
