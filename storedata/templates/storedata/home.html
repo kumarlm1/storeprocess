@@ -11,11 +11,23 @@
 
   <h1> HI , {{user.first_name}} Welcome to Home page</h1>
   {% if user.is_authenticated %}
-
+  {% for item in folder %}
+     <h2>
+      {{item.name}}
+      {{item.updated}}
+    </h2>
+    {%endfor%}
+    <form action="" method="POST">
+      {%csrf_token%}
+    {{form.as_p}}
+    <button >Submit</button>
+  </form>
   <li class="nav-item">
     <a class="nav-link" href="/logout">Logout</a>
   </li>
+
   {%endif%}
+
   {% if not user.is_verified_email %}
  
   <li class="nav-item">

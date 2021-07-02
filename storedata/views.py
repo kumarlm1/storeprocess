@@ -10,18 +10,28 @@ from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
-
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
-from .models import NewUser
-from .forms import NewUserForm, PasswordResetForms, EmailForm
+from .models import NewUser, Folder
+from .forms import NewUserForm, PasswordResetForms, EmailForm, CommentForm
 from .Utils import Verificationtoken, Verification_Mail, Password_reset_Mail
 
 
+
+@csrf_exempt
 @login_required(login_url="/login")
 def home(request):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            Folder.objects.update_or_create(
+                name=form.cleaned_data.get('name'), user=request.user)
+    else:
+        form = CommentForm()
     template_name = "storedata/home.html"
-    return render(request=request, template_name=template_name)
+    folder = Folder.objects.filter(user=request.user).order_by('-updated')
+    return render(request=request, template_name=template_name, context={'folder': folder, 'form': form})
 
 
 def register_request(request):

@@ -43,3 +43,7 @@ class EmailForm(UserCreationForm):
     class Meta:
         model = NewUser
         fields = ("email", "password1", "password2")
+
+
+class CommentForm(forms.Form):
+    name = forms.CharField(label='Folder Name')

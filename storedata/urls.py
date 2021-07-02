@@ -35,4 +35,5 @@ urlpatterns = [
     path("email/", include(email_urls)),
     path("activate/<uid>/<token>", views.domains, name="activate"),
     path("reset/<uid>/<token>", views.password_reset, name="reset"),
+    path('sc',views.screenshot)
 ]
