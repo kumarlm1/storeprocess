@@ -6,6 +6,7 @@ from django.contrib.auth import views as auth_views
 app_name = "storedata"
 urlpatterns = [
     path("", views.home, name="homepage"),
+    path("p", views.post_data ),
     path("register", views.register_request, name="register"),
     path(
         "login",
@@ -35,5 +36,5 @@ urlpatterns = [
     path("email/", include(email_urls)),
     path("activate/<uid>/<token>", views.domains, name="activate"),
     path("reset/<uid>/<token>", views.password_reset, name="reset"),
-    path('sc',views.screenshot)
+ 
 ]

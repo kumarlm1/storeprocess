@@ -12,10 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-import environ
-# Initialise environment variables
-env = environ.Env()
-environ.Env.read_env()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -97,7 +94,18 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
+    },
+    
+    # "problem":{
+    #     'ENGINE':'djongo',
+        
+    #     'CLIENT':{
+    #     'host': 'mongodb://kumardb:uuzjSDYhN8OrdbEj@cluster0-shard-00-00.subzv.gcp.mongodb.net:27017,cluster0-shard-00-01.subzv.gcp.mongodb.net:27017,cluster0-shard-00-02.subzv.gcp.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority',
+    #     'username': 'kumardb',
+    #     'password': 'uuzjSDYhN8OrdbEj',
+    #     'authMechanism': 'SCRAM-SHA-1'
+    #     }
+    # }
 }
 
 
