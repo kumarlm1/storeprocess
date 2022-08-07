@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import NewUser, Folder, File
+from .models import NewUser, Folder, File,Problem
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
@@ -53,9 +53,23 @@ class UserAdminConfigFiles(admin.ModelAdmin):
 
     )
     readonly_fields = ['updated']
+class UserAdminConfigProblem(admin.ModelAdmin):
 
+    
+   
+    list_display = ('file_id','data')
+    fieldsets = (
+        (None, {"fields": ("data",
+                        
+                           "file_id",
+                           )}),
+
+
+    )
+   
 
 admin.site.register(NewUser, UserAdminConfig)
 
 admin.site.register(Folder, UserAdminConfigFolder)
 admin.site.register(File, UserAdminConfigFiles)
+admin.site.register(Problem,UserAdminConfigProblem)

@@ -53,7 +53,7 @@ def post_data(request):
 
 
 @csrf_exempt
-@login_required(login_url="/login")
+@login_required(login_url="accounts/login/")
 def home(request):
     if request.method == 'POST':
         form = CommentForm(request.POST)

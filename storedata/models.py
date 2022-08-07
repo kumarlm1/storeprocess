@@ -76,3 +76,10 @@ class File(models.Model):
 
     class Meta:
         ordering = ['updated']
+
+class Problem(models.Model):
+    file_id = models.ForeignKey(File,on_delete=models.CASCADE)
+    data = models.JSONField()
+
+    def __str__(self):
+        return self.file_id
